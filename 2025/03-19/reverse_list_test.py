@@ -1,6 +1,6 @@
 def reverse_list(numbers):
     # TODO: 여기에 코드를 작성하세요.
-    return numbers[len(numbers):0]  # 임시값
+    return numbers[::-1]  # 임시값
 
 # 테스트 코드
 def test_reverse_list():
