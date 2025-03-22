@@ -17,14 +17,11 @@ def min_electricity_cost(n, plants, connections):  # plants : i번 도시에 발
 
     self = []
     for i, cost in enumerate(plants):  # 자체 발전소를 간선으로 추가
-        self.append((0, i+1, cost))
+        self.append((0, i + 1, cost))
 
-    connections = [*connections,*self]
+    connections = [*connections, *self]
 
-    connections.sort(key=lambda x: (x[2], 0 if x[0] ==0 or x[1] == 0 else 1))
-
-    print(plants)
-    print(connections)
+    connections.sort(key=lambda x: (x[2], -1 if x[0] == 0 or x[1] == 0 else 1))
 
     def find(p, x):
         if p[x] != x:
@@ -40,38 +37,70 @@ def min_electricity_cost(n, plants, connections):  # plants : i번 도시에 발
             p[root_x] = root_y
 
     result_cost = 0
+    edge_count = 0
     for node1, node2, cost in connections:
         if find(city, node1) != find(city, node2):
             union(city, node1, node2)
             result_cost += cost
+            edge_count += 1
+            if edge_count == n:
+                break
+
     return result_cost
 
 
 def test_min_electricity_cost():
+    # connections : 도시, 도시, 비용
     tests = [
         {
             "index": 1,
             "n": 4,
             "plants": [1, 2, 3, 4],
-            "connections": [(1, 2, 1), (2, 3, 1), (3, 4, 1), (1, 4, 100)],  ## 도시, 도시, 비용
-            "want": 3
+            "connections": [
+                (1, 2, 1),
+                (2, 3, 1),
+                (3, 4, 1),
+                (1, 4, 100)
+            ],
+            "want": 4  # 발전소 1 + 연결 3 = 4
         },
         {
             "index": 2,
             "n": 3,
             "plants": [10, 1, 10],
-            "connections": [(1, 2, 100), (2, 3, 100)],
-            "want": 11  # 발전소 2번, 발전소 3번 설치가 더 쌈
+            "connections": [
+                (1, 2, 100),
+                (2, 3, 100)
+            ],
+            "want": 21  # 발전소 2 + 연결 1*1 = 21
         },
         {
             "index": 3,
             "n": 2,
             "plants": [5, 5],
-            "connections": [(1, 2, 1)],
-            "want": 6  # 발전소 하나(5) + 연결(1)
+            "connections": [
+                (1, 2, 1)
+            ],
+            "want": 6  # 발전소 5 + 연결 1
         },
+        {
+            "index": 4,
+            "n": 5,
+            "plants": [1, 1, 1, 1, 1],
+            "connections": [],
+            "want": 5  # 발전소만 5개 설치 (연결 없음)
+        },
+        {
+            "index": 5,
+            "n": 3,
+            "plants": [10, 10, 1],
+            "connections": [
+                (1, 2, 2),
+                (2, 3, 2)
+            ],
+            "want": 5  # 발전소 1 + 연결 2 + 2
+        }
     ]
-
     for test in tests:
         got = min_electricity_cost(test["n"], test["plants"], test["connections"])
         if got != test["want"]:
