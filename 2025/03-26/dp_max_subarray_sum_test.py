@@ -1,8 +1,22 @@
 def max_subarray_sum(nums):
-    # TODO: 여기에 코드를 작성하세요.
-    return 0  # 임시값
-# 파일명: dp_max_subarray_sum_test.py
-# 학습 날짜: 2025-03-24
+    sums = [0 for _ in nums]  # 각 위치까지의 최대 연속합 저장용
+    sums[0] = nums[0]  # 초기값: 첫 원소 자체
+
+    for i in range(1, len(nums)):
+        sums[i] = max(nums[i], nums[i] + sums[i - 1])  # 새로 시작 or 이전 누적
+
+    return max(sums)  # 전체 중 최댓값 반환
+
+
+def max_subarray_sum_better(nums):
+    current_sum = nums[0]
+    max_sum = nums[0]
+
+    for i in range(1, len(nums)):
+        current_sum = max(nums[i], current_sum + nums[i])
+        max_sum = max(max_sum, current_sum)
+
+    return max_sum
 
 
 tests = [
@@ -14,7 +28,7 @@ tests = [
 ]
 
 for t in tests:
-    got = max_subarray_sum(t["nums"])
+    got = max_subarray_sum_better(t["nums"])
     if got != t["want"]:
         print(f"❌ 실패: 테스트 {t['index']} - max_subarray_sum({t['nums']}) = {got}; expected {t['want']}")
     else:
